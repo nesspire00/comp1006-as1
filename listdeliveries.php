@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +24,7 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="https://github.com/nesspire00/comp1006-as1">COMP1006 - Assignment 1</a>
+                <a class="navbar-brand" href="index.php">COMP1006 - Lab 3 (Assignment 1)</a>
             </div>
             <ul class="nav navbar-nav">
                 <li><a href="index.php">Add a New Recepient</a></li>
@@ -35,8 +36,9 @@
     <h2>Current scheduled deliveries: </h2>
 
     <?php
-        //TYPE:host=HOST;dbname=NAME', 'USERNAME', 'PASSWORD'
-        $conn = new PDO('mysql:host=sql.computerstudi.es;dbname=gc200348171', 'gc200348171', 'PASSWORD GOES HERE');
+    try{
+        //connect to db
+        require_once ('db.php');
         
         $sql = "SELECT * FROM postalService ORDER BY idNum DESC";
         $cmd = $conn->prepare($sql);
@@ -55,6 +57,12 @@
     
         // Kill connection
         $conn = null;
+    }
+    //catch the error, send me an email and redirect user to the error page
+    catch(exception $e){
+        mail('nesspire00@gmail.com', 'Error on the website', $e);
+        header('location:error.php');
+    }
     ?>
 
 
@@ -67,3 +75,4 @@
 </body>
 
 </html>
+<?php ob_flush(); ?>

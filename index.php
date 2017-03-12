@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,7 +27,7 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="https://github.com/nesspire00/comp1006-as1">COMP1006 - Assignment 1</a>
+                <a class="navbar-brand" href="index.php">COMP1006 - Lab 3 (Assignment 1)</a>
             </div>
             <ul class="nav navbar-nav">
                 <li class="active"><a href="index.php">Add a New Recepient</a></li>
@@ -70,20 +71,24 @@
 
 
                 <?php
-                //Connect to DB
-                $conn = new PDO('mysql:host=sql.computerstudi.es;dbname=gc200348171', 'gc200348171', 'PASSWORD GOES HERE');
+                try{
+                    //connect to db
+                    require_once ('db.php');
 
-                $sql = "SELECT * FROM provinces";
-                $cmd = $conn->prepare($sql);
-                $cmd->execute();
-                $provinces = $cmd->fetchAll();
-            
-                //Loop over provinces
-                foreach ($provinces as $province){
-                echo '<option value="'.$province['provinceAbbr'].'">'.$province['provinceAbbr'].'</option>';
-            }
-            //Kill connection
-            $conn = null;
+                    $sql = "SELECT * FROM provinces";
+                    $cmd = $conn->prepare($sql);
+                    $cmd->execute();
+                    $provinces = $cmd->fetchAll();
+
+                    //Loop over provinces
+                    foreach ($provinces as $province){
+                    echo '<option value="'.$province['provinceAbbr'].'">'.$province['provinceAbbr'].'</option>';
+                }}
+                //catch the error, send me an email and redirect user to the error page
+                catch(exception $e){
+                    mail('nesspire00@gmail.com', 'Error on the website', $e);
+                    header('location:error.php');
+                }
             ?>
 
 
@@ -100,20 +105,24 @@
         <select class="form-control" name="type" id="type">
 
             <?php
-            //Connect to DB
-            $conn = new PDO('mysql:host=sql.computerstudi.es;dbname=gc200348171', 'gc200348171', 'PASSWORD GOES HERE');
-	
-            $sql = "SELECT * FROM postType";
-            $cmd = $conn->prepare($sql);
-            $cmd->execute();
-            $types = $cmd->fetchAll();
-            
-            //Loop over options
-            foreach ($types as $type){
-                echo '<option value="'.$type['type'].'">'.$type['type'].'</option>';
+            try{
+                $sql = "SELECT * FROM postType";
+                $cmd = $conn->prepare($sql);
+                $cmd->execute();
+                $types = $cmd->fetchAll();
+
+                //Loop over options
+                foreach ($types as $type){
+                    echo '<option value="'.$type['type'].'">'.$type['type'].'</option>';
+                }
+                //Kill connection
+                $conn = null;
             }
-            //Kill connection
-            $conn = null;
+            //catch the error, send me an email and redirect user to the error page
+            catch(exception $e){
+                mail('nesspire00@gmail.com', 'Error on the website', $e);
+                header('location:error.php');
+            }
             ?>
 
         </select>
@@ -131,3 +140,4 @@
 </body>
 
 </html>
+<?php ob_flush(); ?>
